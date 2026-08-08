@@ -1,0 +1,6 @@
+{
+  "name": "Roxyefollow",
+  "description": "Android application for Instagram engagement rewards with Splash Screen, auto internet connectivity checking, M3 Dashboard, Rewarded Ads Coins system, Orders management, and Settings.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

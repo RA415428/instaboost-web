@@ -1,0 +1,139 @@
+{
+  "config": {
+    "adminPassword": "admin123",
+    "maintenanceMode": false,
+    "announcement": {
+      "enabled": true,
+      "title": "🚀 Special 2x Bonus Active!",
+      "message": "Get double coins on every video watch and daily reward claim today!",
+      "bannerUrl": "https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?auto=format&fit=crop&w=800&q=80",
+      "actionUrl": "",
+      "buttonText": "Claim Bonus",
+      "bonusCoins": 50
+    },
+    "smmApi": {
+      "enabled": true,
+      "autoForward": true,
+      "apiUrl": "https://demo-smm-panel.com/api/v2",
+      "globalApiKey": "demo_key_982347101928374",
+      "services": {
+        "followers": {
+          "serviceId": "101",
+          "apiKey": ""
+        },
+        "likes": {
+          "serviceId": "102",
+          "apiKey": ""
+        },
+        "views": {
+          "serviceId": "103",
+          "apiKey": ""
+        },
+        "comments": {
+          "serviceId": "104",
+          "apiKey": ""
+        },
+        "shares": {
+          "serviceId": "105",
+          "apiKey": ""
+        }
+      }
+    },
+    "ads": {
+      "enabled": true,
+      "provider": "AdMob",
+      "adMobAppId": "ca-app-pub-7534769036423854~9595348595",
+      "bannerAdId": "ca-app-pub-7534769036423854/9072604412",
+      "interstitialAdId": "ca-app-pub-7534769036423854/3078307632",
+      "rewardedAdId": "ca-app-pub-7534769036423854/5224354917",
+      "appOpenAdId": "ca-app-pub-7534769036423854/5377167919",
+      "directSmartlinkUrl": "https://doubtfulimpatient.com/bhetpw4me?key=b10856b9df41e998764e3e76a118f915",
+      "adSensePublisherId": "ca-pub-5869373074081897",
+      "autoAdIntervalMinutes": 5,
+      "coinsPerRewardAd": 5,
+      "maxDailyAdsPerUser": 10
+    },
+    "pricing": {
+      "coinsPerFollower": 0.1,
+      "coinsPerLike": 0.05,
+      "coinsPerView": 0.02,
+      "coinsPerComment": 0.2,
+      "coinsPerShare": 0.15,
+      "dailyCheckinReward": 20
+    },
+    "lastUpdated": 0
+  },
+  "orders": [],
+  "usersMap": {
+    "100001": {
+      "id": "usr_100001",
+      "memberId": "100001",
+      "name": "User #100001",
+      "coins": 120,
+      "ordersCount": 2,
+      "status": "BLOCKED",
+      "joinedDate": "Aug 1",
+      "isOnline": false,
+      "lastActive": "Offline (1h ago)",
+      "deviceType": "Android App (APK)",
+      "currentScreen": "Coins Store Screen",
+      "totalCoinsSpent": 300,
+      "location": "India",
+      "updatedAt": 1785913485244,
+      "coinsUpdatedByAdmin": true
+    },
+    "100002": {
+      "id": "usr_100002",
+      "memberId": "100002",
+      "name": "User #100002",
+      "coins": 450,
+      "ordersCount": 5,
+      "status": "ACTIVE",
+      "joinedDate": "Jul 28",
+      "isOnline": false,
+      "lastActive": "Offline (4h ago)",
+      "deviceType": "Android App (APK)",
+      "currentScreen": "Order Create View",
+      "totalCoinsSpent": 1200,
+      "location": "India",
+      "updatedAt": 1785904185244,
+      "coinsUpdatedByAdmin": true
+    },
+    "408102": {
+      "id": "usr_408102",
+      "memberId": "408102",
+      "name": "User #408102",
+      "coins": 0,
+      "ordersCount": 0,
+      "status": "ACTIVE",
+      "joinedDate": "Aug 7",
+      "isOnline": true,
+      "lastActive": "Just now",
+      "deviceType": "Android App (APK)",
+      "currentScreen": "User App View",
+      "totalCoinsSpent": 0,
+      "location": "India",
+      "dailyAdsWatched": 0,
+      "updatedAt": 1786079165435
+    },
+    "605579": {
+      "id": "usr_605579",
+      "memberId": "605579",
+      "name": "User #605579",
+      "coins": 225,
+      "ordersCount": 0,
+      "status": "ACTIVE",
+      "joinedDate": "Aug 5",
+      "isOnline": true,
+      "lastActive": "Just now",
+      "deviceType": "Android App (APK)",
+      "currentScreen": "User App View",
+      "totalCoinsSpent": 0,
+      "location": "India",
+      "dailyAdsWatched": 1,
+      "updatedAt": 1785919082084,
+      "coinsUpdatedByAdmin": true
+    }
+  },
+  "memberCounter": 100003
+}

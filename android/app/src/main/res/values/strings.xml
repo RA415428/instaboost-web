@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Roxyefollow</string>
+    <string name="title_activity_main">Roxyefollow</string>
+    <string name="package_name">com.roxyefollow.app</string>
+    <string name="custom_url_scheme">com.roxyefollow.app</string>
+</resources>

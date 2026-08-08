@@ -25,7 +25,7 @@ export function getApiUrl(path: string): string {
     }
   }
   // Central Cloud Server URL fallback for standalone APKs
-  return `https://ais-dev-qlkvwwy7os3f2svz2fwkrn-609197389972.asia-southeast1.run.app${cleanPath}`;
+  return `https://instaboost-web.onrender.com${cleanPath}`;
 }
 
 export function loadAdminConfig(): AdminConfig {

@@ -1,3 +1,4 @@
+import { PushNotifications } from '@capacitor/push-notifications';
 import React, { useState, useEffect } from 'react';
 import { AppScreen, MainTab, UserWallet, Order, CoinPackage, AdminConfig, UserAccount, ActivityLog } from './types';
 import { 
@@ -51,6 +52,24 @@ import { MaintenanceScreen } from './screens/MaintenanceScreen';
 import { BlockedScreen } from './screens/BlockedScreen';
 
 export function App() {
+useEffect(() => {
+    const setupPushNotifications = async () => {
+      const permission = await PushNotifications.requestPermissions();
+
+      if (permission.receive !== 'granted') {
+        console.log('Push notification permission not granted');
+        return;
+      }
+
+      PushNotifications.addListener('registration', token => {
+  console.log('FCM Token:', token.value);
+});
+
+await PushNotifications.register();    
+};
+
+    setupPushNotifications();
+  }, []);
   const [currentScreen, setCurrentScreen] = useState<AppScreen>('MAIN_APP');
   const [activeTab, setActiveTab] = useState<MainTab>('HOME');
   const [isOnline, setIsOnline] = useState<boolean>(navigator.onLine);

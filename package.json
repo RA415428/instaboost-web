@@ -12,6 +12,7 @@
     "@capacitor/android": "^8.5.0",
     "@capacitor/cli": "^8.5.0",
     "@capacitor/core": "^8.5.0",
+    "@capacitor/push-notifications": "^8.1.2",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "canvas-confetti": "^1.9.2",

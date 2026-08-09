@@ -11,6 +11,7 @@ interface CoinsScreenProps {
   wallet: UserWallet;
   adminConfig?: AdminConfig;
   onOpenAdModal: () => void;
+  onSocialBarClaim: () => void;
   onSelectPaymentPackage: (pkg: CoinPackage) => void;
 }
 
@@ -18,6 +19,7 @@ export const CoinsScreen: React.FC<CoinsScreenProps> = ({
   wallet,
   adminConfig,
   onOpenAdModal,
+  onSocialBarClaim,
   onSelectPaymentPackage
 }) => {
   const maxDailyAds = adminConfig?.ads?.maxDailyAdsPerUser ?? wallet.maxDailyAds ?? 10;
@@ -54,8 +56,7 @@ export const CoinsScreen: React.FC<CoinsScreenProps> = ({
       <SocialBarAd
         customText="Claim Free Bonus Coins - Limited Time Store Bonus!"
         wallet={wallet}
-        adminConfig={adminConfig}
-        onOpenAdModal={onOpenAdModal}
+        onClaim={onSocialBarClaim}
       />
 
       {/* Free Coins - Watch Video Ad Banner */}

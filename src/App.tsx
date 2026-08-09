@@ -236,6 +236,18 @@ saveAdminConfigFirestore(newConfig);
     saveOrders(newOrders);
   };
 
+  const handleSocialBarClaim = () => {
+    const rewardCoins = adminConfig?.ads?.coinsPerRewardAd ?? 10;
+
+    const updatedWallet = {
+      ...wallet,
+      coins: Math.round((wallet.coins + rewardCoins) * 100) / 100
+    };
+
+    handleUpdateWallet(updatedWallet);
+    handleShowToast(`🎁 Social Bar Reward: +${rewardCoins} Coins!`);
+  };
+
   const handleUpdateWallet = (newWallet: UserWallet) => {
     setWallet(newWallet);
     saveUserWallet(newWallet);
@@ -689,6 +701,7 @@ saveAdminConfigFirestore(newConfig);
               wallet={wallet}
               adminConfig={adminConfig}
               onOpenAdModal={handleOpenAdModal}
+              onSocialBarClaim={handleSocialBarClaim}
               onSelectPaymentPackage={(pkg) => setSelectedPaymentPackage(pkg)}
             />
           )}

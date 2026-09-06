@@ -232,3 +232,12 @@ div[class^="at-"][style*="bottom"],
   bottom: 82px !important;
 }
 
+
+/* Safe spacing below Android status bar */
+body {
+  padding-top: env(safe-area-inset-top);
+}
+
+#root {
+  min-height: 100vh;
+}

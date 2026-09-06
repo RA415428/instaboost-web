@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">InstaBoost</string>
+    <string name="title_activity_main">InstaBoost</string>
+    <string name="package_name">com.instaboost.app</string>
+    <string name="custom_url_scheme">com.instaboost.app</string>
+</resources>

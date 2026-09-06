@@ -1,0 +1,151 @@
+{
+  "entities": {
+    "users": {
+      "title": "User Account",
+      "description": "User account profiles, coins balance, daily ads watched, and status",
+      "properties": {
+        "id": { "type": "string" },
+        "memberId": { "type": "string" },
+        "name": { "type": "string" },
+        "coins": { "type": "number" },
+        "dailyAdsWatched": { "type": "number" },
+        "maxDailyAds": { "type": "number" },
+        "status": { "type": "string" },
+        "lastActive": { "type": "string" },
+        "isOnline": { "type": "boolean" },
+        "updatedAt": { "type": "number" },
+        "deviceType": { "type": "string" },
+        "location": { "type": "string" }
+      },
+      "required": ["id", "memberId"]
+    },
+    "orders": {
+      "title": "Order",
+      "description": "User engagement orders for Instagram followers, likes, views, etc.",
+      "properties": {
+        "id": { "type": "string" },
+        "userMemberId": { "type": "string" },
+        "serviceType": { "type": "string" },
+        "targetUrl": { "type": "string" },
+        "quantity": { "type": "number" },
+        "coinCost": { "type": "number" },
+        "status": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "serviceType", "quantity"]
+    },
+    "logs": {
+      "title": "Activity Log",
+      "description": "System activity logs and transaction history",
+      "properties": {
+        "id": { "type": "string" },
+        "type": { "type": "string" },
+        "title": { "type": "string" },
+        "detail": { "type": "string" },
+        "timestamp": { "type": "string" },
+        "userMemberId": { "type": "string" },
+        "badgeColor": { "type": "string" }
+      },
+      "required": ["id", "title"]
+    },
+    "config": {
+      "title": "Admin Configuration",
+      "description": "Global application configuration and settings",
+      "properties": {
+        "adminPassword": { "type": "string" },
+        "maintenanceMode": { "type": "boolean" },
+        "announcement": { "type": "object" },
+        "smmApi": { "type": "object" },
+        "ads": { "type": "object" },
+        "pricing": { "type": "object" },
+        "coinPackages": { "type": "array" },
+        "paymentSettings": { "type": "object" },
+        "branchSettings": { "type": "object" },
+        "appUpdate": { "type": "object" },
+        "lastUpdated": { "type": "number" }
+      }
+    },
+    "payment_requests": {
+      "title": "Payment Request Claim",
+      "description": "Payment claims with UTR number for coin purchases",
+      "properties": {
+        "id": { "type": "string" },
+        "userMemberId": { "type": "string" },
+        "userName": { "type": "string" },
+        "packageId": { "type": "string" },
+        "coins": { "type": "number" },
+        "amountINR": { "type": "string" },
+        "utrNumber": { "type": "string" },
+        "paymentMethod": { "type": "string" },
+        "status": { "type": "string" },
+        "timestamp": { "type": "number" },
+        "dateFormatted": { "type": "string" }
+      },
+      "required": ["id", "userMemberId", "utrNumber"]
+    },
+    "referrals": {
+      "title": "Referral Record",
+      "description": "Deterministic referral reward record connecting referrer and referee",
+      "properties": {
+        "id": { "type": "string" },
+        "referrerId": { "type": "string" },
+        "referredUserId": { "type": "string" },
+        "referrerUid": { "type": "string" },
+        "referredUid": { "type": "string" },
+        "referralCode": { "type": "string" },
+        "referrerReward": { "type": "number" },
+        "referredReward": { "type": "number" },
+        "status": { "type": "string" },
+        "fraudStatus": { "type": "string" },
+        "createdAt": { "type": "number" },
+        "deviceFingerprint": { "type": "string" }
+      },
+      "required": ["id", "referrerUid", "referredUid", "status"]
+    },
+    "coinTransactions": {
+      "title": "Coin Transaction Ledger",
+      "description": "Immutable ledger for tracking user balance credits and debits",
+      "properties": {
+        "id": { "type": "string" },
+        "uid": { "type": "string" },
+        "amount": { "type": "number" },
+        "type": { "type": "string" },
+        "source": { "type": "string" },
+        "referralId": { "type": "string" },
+        "createdAt": { "type": "number" },
+        "timestampFormatted": { "type": "string" }
+      },
+      "required": ["id", "uid", "amount", "type"]
+    }
+  },
+  "firestore": {
+    "/config/global": {
+      "schema": "config",
+      "description": "Global admin configuration settings"
+    },
+    "/users/{memberId}": {
+      "schema": "users",
+      "description": "Individual user accounts and wallet documents"
+    },
+    "/orders/{orderId}": {
+      "schema": "orders",
+      "description": "User engagement service orders"
+    },
+    "/logs/{logId}": {
+      "schema": "logs",
+      "description": "Activity logs and transaction audit entries"
+    },
+    "/payment_requests/{requestId}": {
+      "schema": "payment_requests",
+      "description": "Payment claim requests and verification status"
+    },
+    "/referrals/{referralId}": {
+      "schema": "referrals",
+      "description": "Deterministic referral reward records"
+    },
+    "/coinTransactions/{transactionId}": {
+      "schema": "coinTransactions",
+      "description": "Immutable coin transactions and credit log"
+    }
+  }
+}

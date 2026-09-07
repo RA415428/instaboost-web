@@ -72,19 +72,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
 
     // Expanded Hashtags categories
     private val _expandedCategoryId = MutableStateFlow<String?>("art")
-    val expandedCategoryId: StateFlow<String?> = _expandedCategoryId.asStateFlow()
-
-    // Rewarded Ad Simulation State
-    private val _showAdModal = MutableStateFlow(false)
-    val showAdModal: StateFlow<Boolean> = _showAdModal.asStateFlow()
-
-    private val _adTimer = MutableStateFlow(5)
-    val adTimer: StateFlow<Int> = _adTimer.asStateFlow()
-
-    private val _isAdCompleted = MutableStateFlow(false)
-    val isAdCompleted: StateFlow<Boolean> = _isAdCompleted.asStateFlow()
-
-    // Payment Simulation State
+    val expandedCategoryId: StateFlow<String?> = _expandedCategoryId.asStateFlow()// Payment Simulation State
     private val _selectedCoinPackage = MutableStateFlow<CoinPackage?>(null)
     val selectedCoinPackage: StateFlow<CoinPackage?> = _selectedCoinPackage.asStateFlow()
 
@@ -173,7 +161,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         _toastMessage.value = null
     }
 
-    // Rewarded Ad Simulation
+    // Unity Rewarded Ad logic
     private var rewardedLocked = false
     private var activeTimerJob: Job? = null
     private var activeSeconds = 0
@@ -189,8 +177,18 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+    private var launchHandled = false
+
     fun onMainAppReady(activity: android.app.Activity) {
         startActiveTimer(activity)
+        if (launchHandled) return
+        launchHandled = true
+        val prefs = getApplication<Application>().getSharedPreferences("unity_ad_prefs", Context.MODE_PRIVATE)
+        val launchCount = prefs.getInt("launch_count", 0) + 1
+        prefs.edit().putInt("launch_count", launchCount).apply()
+        if (launchCount % 2 == 1) {
+            com.example.ads.UnityAdsManager.showInterstitial(activity)
+        }
     }
 
     fun onAppResumed(activity: android.app.Activity) {
@@ -212,7 +210,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                     activeSeconds = 0
                     continue
                 }
-                if (!com.example.ads.UnityAdsManager.isAdShowing()) {
+                if (!com.example.ads.UnityAdsManager.isAdShowing() && !com.example.ads.UnityAdsManager.isRewardedBusy()) {
                     activeSeconds++
                     if (activeSeconds >= 240) {
                         activeSeconds = 0
@@ -225,40 +223,37 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
 
     fun startRewardedAd(activity: android.app.Activity) {
         if (rewardedLocked) return
+
         if (_wallet.value.dailyAdsWatched >= _wallet.value.maxDailyAds) {
             showToast("Daily ad limit reached")
             return
         }
+
+        // Lock immediately so repeated taps cannot start another ad.
         rewardedLocked = true
+
         com.example.ads.UnityAdsManager.showRewarded(
             activity,
             onCompleted = {
-                _wallet.update { it.copy(coins = it.coins + 10, dailyAdsWatched = it.dailyAdsWatched + 1) }
+                _wallet.update {
+                    it.copy(
+                        coins = it.coins + 10,
+                        dailyAdsWatched = it.dailyAdsWatched + 1
+                    )
+                }
                 showToast("You earned 10 coins!")
+
+                // Manual Watch Ad cooldown: 10 seconds after completion.
                 viewModelScope.launch {
                     delay(10000)
                     rewardedLocked = false
                 }
             },
-            onFailed = { rewardedLocked = false }
-        )
-    }
-
-    fun claimAdReward() {
-        if (_isAdCompleted.value) {
-            _wallet.update {
-                it.copy(
-                    coins = it.coins + 10,
-                    dailyAdsWatched = (it.dailyAdsWatched + 1).coerceAtMost(it.maxDailyAds)
-                )
+            onFailed = {
+                // If the ad fails, allow the user to retry immediately.
+                rewardedLocked = false
             }
-            _showAdModal.value = false
-            showToast("🎉 +10 Coins added to your wallet!")
-        }
-    }
-
-    fun dismissAdModal() {
-        _showAdModal.value = false
+        )
     }
 
     // Payment Flow

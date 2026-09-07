@@ -1,7 +1,6 @@
 package com.example
 
 import android.os.Bundle
-import android.app.Activity
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -50,37 +49,12 @@ import com.example.viewmodel.AppViewModel
 import com.example.viewmodel.MainTab
 
 class MainActivity : ComponentActivity() {
-
     private val viewModel: AppViewModel by viewModels()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        try { enableEdgeToEdge() } catch (_: Exception) { }
-
-        if (savedInstanceState == null) {
-            val launchPrefs = getSharedPreferences("unity_ad_state", MODE_PRIVATE)
-            val launchCount = launchPrefs.getInt("launch_count", 0) + 1
-            launchPrefs.edit().putInt("launch_count", launchCount).apply()
-            if (launchCount % 2 == 1) {
-                window.decorView.postDelayed({
-                    com.example.ads.UnityAdsManager.showInterstitial(this)
-                }, 1500)
-            }
-        }
-
-        setContent {
-            val isDarkTheme by viewModel.isDarkTheme.collectAsState()
-            MyApplicationTheme(darkTheme = isDarkTheme) {
-                MainAppEntry(viewModel, this@MainActivity)
-            }
-        }
-    }
 
     override fun onResume() {
         super.onResume()
-        if (viewModel.currentScreen.value == AppScreen.MAIN_APP) {
-            viewModel.onAppResumed(this)
-        }
+        viewModel.onAppResumed(this)
     }
 
     override fun onPause() {
@@ -88,10 +62,27 @@ class MainActivity : ComponentActivity() {
         super.onPause()
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        try {
+            enableEdgeToEdge()
+        } catch (_: Exception) {
+        }
+
+        setContent {
+            val isDarkTheme by viewModel.isDarkTheme.collectAsState()
+
+            MyApplicationTheme(darkTheme = isDarkTheme) {
+                MainAppEntry(viewModel, this)
+            }
+        }
+    }
+}
 
 @Composable
-fun MainAppEntry(viewModel: AppViewModel, activity: Activity) {
+fun MainAppEntry(viewModel: AppViewModel, activity: android.app.Activity) {
     val currentScreen by viewModel.currentScreen.collectAsState()
+
     LaunchedEffect(currentScreen) {
         if (currentScreen == AppScreen.MAIN_APP) {
             viewModel.onMainAppReady(activity)
@@ -231,9 +222,6 @@ fun MainAppEntry(viewModel: AppViewModel, activity: Activity) {
         }
 
         // Overlays & Modals
-                onDismiss = { viewModel.dismissAdModal() }
-            )
-        }
 
         if (showPaymentModal && selectedCoinPkg != null) {
             PaymentSimulationDialog(
@@ -301,6 +289,5 @@ fun MainAppEntry(viewModel: AppViewModel, activity: Activity) {
                 )
             }
         }
-    }
     }
 }

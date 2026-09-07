@@ -126,8 +126,6 @@ object UnityAdsManager {
 
                     if (rewardedBusy && pendingRewardedActivity != null) {
                         showRewardedNow()
-                    } else {
-                        loadRewarded()
                     }
                 }
 
@@ -251,8 +249,6 @@ object UnityAdsManager {
 
                     if (interstitialBusy && pendingInterstitialActivity != null) {
                         showInterstitialNow()
-                    } else {
-                        loadInterstitial()
                     }
                 }
 

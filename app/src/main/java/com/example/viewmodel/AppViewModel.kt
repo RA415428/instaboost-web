@@ -177,26 +177,6 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    private var launchHandled = false
-
-    fun onMainAppReady(activity: android.app.Activity) {
-        startActiveTimer(activity)
-        if (launchHandled) return
-        launchHandled = true
-        val prefs = getApplication<Application>().getSharedPreferences("unity_ad_prefs", Context.MODE_PRIVATE)
-        val launchCount = prefs.getInt("launch_count", 0) + 1
-        prefs.edit().putInt("launch_count", launchCount).apply()
-        if (launchCount % 2 == 1) {
-            viewModelScope.launch {
-                delay(1500)
-                if (currentScreen.value == AppScreen.MAIN_APP) {
-                    try {
-                        com.example.ads.UnityAdsManager.showInterstitial(activity)
-                    } catch (_: Exception) {
-                    }
-                }
-            }
-        }
     }
 
     fun onAppResumed(activity: android.app.Activity) {

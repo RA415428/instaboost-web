@@ -85,7 +85,6 @@ fun MainAppEntry(viewModel: AppViewModel, activity: android.app.Activity) {
 
     LaunchedEffect(currentScreen) {
         if (currentScreen == AppScreen.MAIN_APP) {
-            viewModel.onMainAppReady(activity)
         }
     }
     val activeTab by viewModel.activeTab.collectAsState()

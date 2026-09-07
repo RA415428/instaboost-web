@@ -56,7 +56,6 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         try { enableEdgeToEdge() } catch (_: Exception) { }
-        com.example.ads.UnityAdsManager.initialize(this)
 
         if (savedInstanceState == null) {
             val launchPrefs = getSharedPreferences("unity_ad_state", MODE_PRIVATE)

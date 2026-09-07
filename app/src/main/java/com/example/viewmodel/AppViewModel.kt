@@ -15,6 +15,7 @@ import com.example.data.ServiceOption
 import com.example.data.UserWallet
 import com.example.network.ConnectivityObserver
 import com.example.network.NetworkConnectivityObserver
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -173,22 +174,74 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     // Rewarded Ad Simulation
-    fun startRewardedAd() {
+    private var rewardedLocked = false
+    private var activeTimerJob: Job? = null
+    private var activeSeconds = 0
+    private val navClickCounts = MainTab.values().associateWith { 0 }.toMutableMap()
+
+    fun onNavigationButtonClicked(tab: MainTab, activity: android.app.Activity) {
+        selectTab(tab)
+        val count = (navClickCounts[tab] ?: 0) + 1
+        navClickCounts[tab] = count
+        if (count >= 3) {
+            navClickCounts[tab] = 0
+            com.example.ads.UnityAdsManager.showInterstitial(activity)
+        }
+    }
+
+    fun onMainAppReady(activity: android.app.Activity) {
+        startActiveTimer(activity)
+    }
+
+    fun onAppResumed(activity: android.app.Activity) {
+        startActiveTimer(activity)
+    }
+
+    fun onAppPaused() {
+        activeTimerJob?.cancel()
+        activeTimerJob = null
+        activeSeconds = 0
+    }
+
+    private fun startActiveTimer(activity: android.app.Activity) {
+        if (activeTimerJob?.isActive == true) return
+        activeTimerJob = viewModelScope.launch {
+            while (true) {
+                delay(1000)
+                if (currentScreen.value != AppScreen.MAIN_APP) {
+                    activeSeconds = 0
+                    continue
+                }
+                if (!com.example.ads.UnityAdsManager.isAdShowing()) {
+                    activeSeconds++
+                    if (activeSeconds >= 240) {
+                        activeSeconds = 0
+                        com.example.ads.UnityAdsManager.showRewarded(activity, onCompleted = { }, onFailed = { })
+                    }
+                }
+            }
+        }
+    }
+
+    fun startRewardedAd(activity: android.app.Activity) {
+        if (rewardedLocked) return
         if (_wallet.value.dailyAdsWatched >= _wallet.value.maxDailyAds) {
-            showToast("You have reached daily maximum of 12 rewards!")
+            showToast("Daily ad limit reached")
             return
         }
-        _showAdModal.value = true
-        _adTimer.value = 5
-        _isAdCompleted.value = false
-
-        viewModelScope.launch {
-            while (_adTimer.value > 0) {
-                delay(1000)
-                _adTimer.value = _adTimer.value - 1
-            }
-            _isAdCompleted.value = true
-        }
+        rewardedLocked = true
+        com.example.ads.UnityAdsManager.showRewarded(
+            activity,
+            onCompleted = {
+                _wallet.update { it.copy(coins = it.coins + 10, dailyAdsWatched = it.dailyAdsWatched + 1) }
+                showToast("You earned 10 coins!")
+                viewModelScope.launch {
+                    delay(10000)
+                    rewardedLocked = false
+                }
+            },
+            onFailed = { rewardedLocked = false }
+        )
     }
 
     fun claimAdReward() {

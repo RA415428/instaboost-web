@@ -1,6 +1,7 @@
 package com.example
 
 import android.os.Bundle
+import android.app.Activity
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -33,7 +34,6 @@ import com.example.ui.components.BottomNavBar
 import com.example.ui.components.OrderSuccessDialog
 import com.example.ui.components.PaymentSimulationDialog
 import com.example.ui.components.PrivacyTermsDialog
-import com.example.ui.components.RewardedAdDialog
 import com.example.ui.components.SupportDialog
 import com.example.ui.components.TopHeaderBar
 import com.example.ui.screens.DashboardScreen
@@ -55,24 +55,49 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        try {
-            enableEdgeToEdge()
-        } catch (_: Exception) {
+        try { enableEdgeToEdge() } catch (_: Exception) { }
+        com.example.ads.UnityAdsManager.initialize(this)
+
+        if (savedInstanceState == null) {
+            val launchPrefs = getSharedPreferences("unity_ad_state", MODE_PRIVATE)
+            val launchCount = launchPrefs.getInt("launch_count", 0) + 1
+            launchPrefs.edit().putInt("launch_count", launchCount).apply()
+            if (launchCount % 2 == 1) {
+                window.decorView.postDelayed({
+                    com.example.ads.UnityAdsManager.showInterstitial(this)
+                }, 1500)
+            }
         }
 
         setContent {
             val isDarkTheme by viewModel.isDarkTheme.collectAsState()
-
             MyApplicationTheme(darkTheme = isDarkTheme) {
-                MainAppEntry(viewModel)
+                MainAppEntry(viewModel, this@MainActivity)
             }
         }
     }
-}
+
+    override fun onResume() {
+        super.onResume()
+        if (viewModel.currentScreen.value == AppScreen.MAIN_APP) {
+            viewModel.onAppResumed(this)
+        }
+    }
+
+    override fun onPause() {
+        viewModel.onAppPaused()
+        super.onPause()
+    }
+
 
 @Composable
-fun MainAppEntry(viewModel: AppViewModel) {
+fun MainAppEntry(viewModel: AppViewModel, activity: Activity) {
     val currentScreen by viewModel.currentScreen.collectAsState()
+    LaunchedEffect(currentScreen) {
+        if (currentScreen == AppScreen.MAIN_APP) {
+            viewModel.onMainAppReady(activity)
+        }
+    }
     val activeTab by viewModel.activeTab.collectAsState()
     val isConnected by viewModel.isInternetConnected.collectAsState()
     val wallet by viewModel.wallet.collectAsState()
@@ -81,9 +106,6 @@ fun MainAppEntry(viewModel: AppViewModel) {
     val isDarkTheme by viewModel.isDarkTheme.collectAsState()
     val toastMsg by viewModel.toastMessage.collectAsState()
 
-    val showAdModal by viewModel.showAdModal.collectAsState()
-    val adTimer by viewModel.adTimer.collectAsState()
-    val isAdCompleted by viewModel.isAdCompleted.collectAsState()
 
     val showPaymentModal by viewModel.showPaymentModal.collectAsState()
     val selectedCoinPkg by viewModel.selectedCoinPackage.collectAsState()
@@ -126,7 +148,7 @@ fun MainAppEntry(viewModel: AppViewModel) {
                     bottomBar = {
                         BottomNavBar(
                             selectedTab = activeTab,
-                            onTabSelected = { viewModel.selectTab(it) }
+                            onTabSelected = { viewModel.onNavigationButtonClicked(it, activity) }
                         )
                     },
                     containerColor = DarkBackground
@@ -142,7 +164,7 @@ fun MainAppEntry(viewModel: AppViewModel) {
                                     wallet = wallet,
                                     expandedCategoryId = expandedCategory,
                                     onToggleCategory = { viewModel.toggleCategoryExpansion(it) },
-                                    onWatchAdsClick = { viewModel.startRewardedAd() },
+                                    onWatchAdsClick = { viewModel.startRewardedAd(activity) },
                                     onCopyIdClick = { viewModel.copyToClipboard(wallet.memberId, "Member ID") },
                                     onCopyHashtagsClick = { viewModel.copyToClipboard(it, "Hashtags") }
                                 )
@@ -210,11 +232,6 @@ fun MainAppEntry(viewModel: AppViewModel) {
         }
 
         // Overlays & Modals
-        if (showAdModal) {
-            RewardedAdDialog(
-                adTimer = adTimer,
-                isCompleted = isAdCompleted,
-                onClaimReward = { viewModel.claimAdReward() },
                 onDismiss = { viewModel.dismissAdModal() }
             )
         }
@@ -285,5 +302,6 @@ fun MainAppEntry(viewModel: AppViewModel) {
                 )
             }
         }
+    }
     }
 }

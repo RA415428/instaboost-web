@@ -187,7 +187,15 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         val launchCount = prefs.getInt("launch_count", 0) + 1
         prefs.edit().putInt("launch_count", launchCount).apply()
         if (launchCount % 2 == 1) {
-            com.example.ads.UnityAdsManager.showInterstitial(activity)
+            viewModelScope.launch {
+                delay(1500)
+                if (currentScreen.value == AppScreen.MAIN_APP) {
+                    try {
+                        com.example.ads.UnityAdsManager.showInterstitial(activity)
+                    } catch (_: Exception) {
+                    }
+                }
+            }
         }
     }
 

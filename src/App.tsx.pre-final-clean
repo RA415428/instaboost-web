@@ -29,6 +29,7 @@ import { submitOrderToSmmApi } from './utils/smmService';
 
 import { TopBar } from './components/TopBar';
 import { BottomNavBar } from './components/BottomNavBar';
+import { AdBanner } from './components/AdBanner';
 import { TopSlidingAd } from './components/TopSlidingAd';
 import { PopunderHandler } from './components/PopunderHandler';
 import { AdModal } from './components/AdModal';
@@ -1218,6 +1219,15 @@ export function App() {
           isOnline={isOnline}
         />
 
+        {/* Banner Ad placed at top under TopBar with Click & Earn Coins */}
+        <AdBanner
+          id="top_bar_banner"
+          className="my-2 px-2"
+          rewardCoins={adminConfig.ads?.coinsPerBannerClick ?? 5}
+          smartlinkUrl={adminConfig.ads?.directSmartlinkUrl}
+          onRewardClaim={(coins) => handleRewardEarned(coins, false)}
+        />
+
         {/* Top Sliding Social Banner Ad (AppCreator24 style) */}
         <TopSlidingAd
           smartlinkUrl={adminConfig.ads?.directSmartlinkUrl}
@@ -1344,7 +1354,12 @@ export function App() {
         <AdModal
           isOpen={showAdModal}
           onClose={() => setShowAdModal(false)}
-          onReward={handleRewardEarned}
+          onRewardClaim={handleRewardEarned}
+          rewardCoins={adminConfig.ads.coinsPerRewardAd}
+          adProvider={adminConfig.ads.provider}
+          adUnitId={adminConfig.ads.rewardedAdId}
+          isAutoTimerAd={isAutoTimerAd}
+          smartlinkUrl={adminConfig.ads.directSmartlinkUrl}
         />
 
         <PaymentModal

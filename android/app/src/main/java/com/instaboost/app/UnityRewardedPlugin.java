@@ -1,10 +1,11 @@
 package com.instaboost.app;
 
 import android.app.Activity;
-import com.getcapacitor.Plugin;
-import com.getcapacitor.PluginCall;
-import com.getcapacitor.annotation.CapacitorPlugin;
-import com.getcapacitor.PluginMethod;
+import com.capacitor.Plugin;
+import com.capacitor.PluginCall;
+import com.capacitor.JSObject;
+import com.capacitor.annotation.CapacitorPlugin;
+import com.capacitor.annotation.PluginMethod;
 
 import com.unity3d.ads.IUnityAdsInitializationListener;
 import com.unity3d.ads.IUnityAdsLoadListener;
@@ -22,7 +23,11 @@ public class UnityRewardedPlugin extends Plugin {
     @Override
     public void load() {
         Activity activity = getActivity();
-        UnityAds.initialize(activity, GAME_ID, false,
+
+        UnityAds.initialize(
+            activity,
+            GAME_ID,
+            false,
             new IUnityAdsInitializationListener() {
                 @Override
                 public void onInitializationComplete() {}
@@ -31,7 +36,8 @@ public class UnityRewardedPlugin extends Plugin {
                 public void onInitializationFailed(
                         UnityAds.UnityAdsInitializationError error,
                         String message) {}
-            });
+            }
+        );
     }
 
     @PluginMethod
@@ -42,7 +48,9 @@ public class UnityRewardedPlugin extends Plugin {
             @Override
             public void onUnityAdsAdLoaded(String placementId) {
                 activity.runOnUiThread(() ->
-                    UnityAds.show(activity, REWARDED_ID,
+                    UnityAds.show(
+                        activity,
+                        REWARDED_ID,
                         new UnityAdsShowOptions(),
                         new IUnityAdsShowListener() {
                             @Override
@@ -63,13 +71,16 @@ public class UnityRewardedPlugin extends Plugin {
                             public void onUnityAdsShowComplete(
                                     String placementId,
                                     UnityAds.UnityAdsShowCompletionState state) {
-                                call.resolve(
-                                    new com.getcapacitor.JSObject()
-                                        .put("rewarded",
-                                             state == UnityAds.UnityAdsShowCompletionState.COMPLETED)
+
+                                JSObject result = new JSObject();
+                                result.put(
+                                    "rewarded",
+                                    state == UnityAds.UnityAdsShowCompletionState.COMPLETED
                                 );
+                                call.resolve(result);
                             }
-                        })
+                        }
+                    )
                 );
             }
 
@@ -91,7 +102,9 @@ public class UnityRewardedPlugin extends Plugin {
             @Override
             public void onUnityAdsAdLoaded(String placementId) {
                 activity.runOnUiThread(() ->
-                    UnityAds.show(activity, INTERSTITIAL_ID,
+                    UnityAds.show(
+                        activity,
+                        INTERSTITIAL_ID,
                         new UnityAdsShowOptions(),
                         new IUnityAdsShowListener() {
                             @Override
@@ -114,7 +127,8 @@ public class UnityRewardedPlugin extends Plugin {
                                     UnityAds.UnityAdsShowCompletionState state) {
                                 call.resolve();
                             }
-                        })
+                        }
+                    )
                 );
             }
 

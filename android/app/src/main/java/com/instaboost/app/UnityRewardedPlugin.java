@@ -1,11 +1,11 @@
 package com.instaboost.app;
 
 import android.app.Activity;
-import com.capacitor.Plugin;
-import com.capacitor.PluginCall;
-import com.capacitor.JSObject;
-import com.capacitor.annotation.CapacitorPlugin;
-import com.capacitor.annotation.PluginMethod;
+import com.getcapacitor.Plugin;
+import com.getcapacitor.PluginCall;
+import com.getcapacitor.JSObject;
+import com.getcapacitor.annotation.CapacitorPlugin;
+import com.getcapacitor.PluginMethod;
 
 import com.unity3d.ads.IUnityAdsInitializationListener;
 import com.unity3d.ads.IUnityAdsLoadListener;
